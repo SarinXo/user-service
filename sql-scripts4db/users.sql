@@ -1,10 +1,10 @@
 CREATE SCHEMA IF NOT EXISTS users_schema;
 
 CREATE TABLE IF NOT EXISTS users_schema.users(
-    login       VARCHAR(20) PRIMARY KEY,
+    farmer_id   SERIAL PRIMARY KEY,
+    login       VARCHAR(20) UNIQUE,
     password    VARCHAR(40),
-    role        VARCHAR(20),
-    farmer_id   INT
+    role        VARCHAR(20)
 );
 
 INSERT INTO users_schema.users (login, password, role, farmer_id)
@@ -19,3 +19,7 @@ INSERT INTO users_schema.users (login, password, role, farmer_id)
 ('user8', 'password8', 'USER', 8),
 ('user9', 'password9', 'USER', 9),
 ('user10', 'password10', 'USER', 10);
+
+INSERT INTO users_schema.users (login, password, role, farmer_id)
+VALUES
+('admin', 'admin', 'ADMIN', 11)
