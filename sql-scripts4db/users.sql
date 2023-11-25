@@ -7,19 +7,19 @@ CREATE TABLE IF NOT EXISTS users_schema.users(
     role        VARCHAR(20)
 );
 
-INSERT INTO users_schema.users (login, password, role, farmer_id)
+INSERT INTO users_schema.users (login, password, role)
     VALUES
-('user1', 'password1', 'USER', 1),
-('user2', 'password2', 'USER', 2),
-('user3', 'password3', 'USER', 3),
-('user4', 'password4', 'USER', 4),
-('user5', 'password5', 'USER', 5),
-('user6', 'password6', 'USER', 6),
-('user7', 'password7', 'USER', 7),
-('user8', 'password8', 'USER', 8),
-('user9', 'password9', 'USER', 9),
-('user10', 'password10', 'USER', 10);
+('user1', 'password1', 'USER'),
+('user2', 'password2', 'USER'),
+('user3', 'password3', 'USER'),
+('user4', 'password4', 'USER'),
+('user5', 'password5', 'USER'),
+('user6', 'password6', 'USER'),
+('user7', 'password7', 'USER'),
+('user8', 'password8', 'USER'),
+('user9', 'password9', 'USER'),
+('user10', 'password10', 'USER');
 
-INSERT INTO users_schema.users (login, password, role, farmer_id)
+INSERT INTO users_schema.users (login, password, role)
 VALUES
-('admin', 'admin', 'ADMIN', 11)
+('admin', 'admin', 'ADMIN');
