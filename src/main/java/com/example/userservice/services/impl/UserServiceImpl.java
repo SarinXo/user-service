@@ -2,6 +2,7 @@ package com.example.userservice.services.impl;
 
 
 import com.example.userservice.dto.UserRequest;
+import com.example.userservice.entities.Role;
 import com.example.userservice.entities.User;
 import com.example.userservice.handlers.exceptions.UserError;
 import com.example.userservice.repositories.UserRepository;
@@ -43,7 +44,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .login(userRequest.getLogin())
                 .password(userRequest.getPassword())
-                .role("USER")
+                .role(Role.USER)
                 .build();
         return userRepository.save(user);
     }
