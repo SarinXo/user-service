@@ -10,10 +10,8 @@ spring:
     password: admin
   jpa:
     hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
       ddl-auto: update
-    properties:
-      hibernate:
-        default_schema: users_schema
 
 eureka:
   instance:

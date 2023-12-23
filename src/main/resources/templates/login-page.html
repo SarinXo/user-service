@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css" crossorigin="">
+    <link rel="stylesheet" href="/static/css/login-page.css">
+    <title>Вход</title>
+</head>
+<body>
+<div class="login">
+    <img src="/static/img/login-bg.jpg" alt="image" class="login__bg">
+
+    <form method="post" th:action="@{/login}" class="login__form">
+        <h1 class="login__title">Войти</h1>
+
+        <div class="login__inputs">
+            <div class="login__box">
+                <input id="username" type="text" placeholder="Почта" required class="login__input">
+                <i class="ri-mail-fill"></i>
+            </div>
+
+            <div class="login__box">
+                <input id="password" type="password" placeholder="Пароль" required class="login__input">
+                <i class="ri-lock-2-fill"></i>
+            </div>
+        </div>
+
+        <button type="submit" class="login__button">Войти</button>
+
+        <div class="login__register">
+            Не имеете аккаунта? Обратитесь к администратору.
+        </div>
+    </form>
+</div>
+</body>
+</html>

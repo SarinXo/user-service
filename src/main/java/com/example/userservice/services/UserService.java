@@ -15,4 +15,6 @@ public interface UserService {
     Boolean isExist(String login);
 
     Boolean isCorrectUser(UserRequest userRequest);
+
+
 }
