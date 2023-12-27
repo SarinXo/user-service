@@ -20,8 +20,8 @@ public class WebSecurityConfig{
 
     private final UserDetailsService userDetailsService;
 
-    public WebSecurityConfig(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    public WebSecurityConfig(UserDetailsService userDetailsServiceImpl) {
+        this.userDetailsService = userDetailsServiceImpl;
     }
 
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
