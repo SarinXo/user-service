@@ -1,6 +1,6 @@
 package com.example.userservice.controllers;
 
-import com.example.userservice.dto.UserRequest;
+import com.example.userservice.dto.UserDto;
 import com.example.userservice.entities.User;
 import com.example.userservice.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController()
 @RequestMapping("/users")
@@ -23,13 +25,13 @@ public class UserController {
 
     @GetMapping("/{login}")
     public ResponseEntity<User> getUser(@PathVariable String login) {
-        User user = userService.getUser(login);
+        User user = userService.getUserByLogin(login);
         return ResponseEntity.ok(user);
     }
 
     @PostMapping()
-    public ResponseEntity<User> addUser(@RequestBody UserRequest userRequest) {
-        User user = userService.addUser(userRequest);
+    public ResponseEntity<User> addUser(@RequestBody UserDto userDto) {
+        User user = userService.addUser(userDto);
         return ResponseEntity.ok(user);
     }
 
@@ -39,9 +41,14 @@ public class UserController {
         return ResponseEntity.ok(isExist);
     }
 
+    @GetMapping("/find")
+    public ResponseEntity<List<User>> findAllUsers() {
+        return ResponseEntity.ok(userService.findAll());
+    }
+
     @PostMapping("/is-correct")
-    public ResponseEntity<Boolean> isCorrectUser(@RequestBody UserRequest userRequest) {
-        Boolean isCorrect = userService.isCorrectUser(userRequest);
+    public ResponseEntity<Boolean> isCorrectUser(@RequestBody UserDto userDto) {
+        Boolean isCorrect = userService.isCorrectUser(userDto);
         return ResponseEntity.ok(isCorrect);
     }
 

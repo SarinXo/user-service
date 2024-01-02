@@ -1,8 +1,7 @@
 package com.example.userservice.services.impl;
 
-
-import com.example.userservice.dto.UserRequest;
-import com.example.userservice.entities.Role;
+import com.example.userservice.dto.UserDto;
+import com.example.userservice.dto.Role;
 import com.example.userservice.entities.User;
 import com.example.userservice.handlers.exceptions.UserError;
 import com.example.userservice.repositories.UserRepository;
@@ -10,8 +9,8 @@ import com.example.userservice.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,7 +23,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String login) {
+    public User getUserByLogin(String login) {
         User user = userRepository.getUserByLogin(login);
         if(Objects.isNull(user))
             throw new UserError("user doeesn't not exist in db");
@@ -37,21 +36,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addUser(UserRequest userRequest) {
-        if(isExist(userRequest.getLogin())){
+    public User addUser(UserDto userDto) {
+        if(isExist(userDto.getUsername())){
             throw new UserError("User already exist in database");
         }
         User user = User.builder()
-                .login(userRequest.getLogin())
-                .password(userRequest.getPassword())
-                .role(Role.USER)
+                .login(userDto.getUsername())
+                .password(userDto.getPassword())
+                .role(Role.ROLE_USER)
                 .build();
         return userRepository.save(user);
     }
 
     @Override
-    public Boolean isCorrectUser(UserRequest userRequest) {
-        User user = getUser(userRequest.getLogin());
-        return user.getPassword().equals(userRequest.getPassword());
+    public Boolean isCorrectUser(UserDto userDto) {
+        User user = getUserByLogin(userDto.getUsername());
+        return user.getPassword().equals(userDto.getPassword());
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.userservice.services.impl;
 
+import com.example.userservice.dto.UserAuthDetails;
 import com.example.userservice.entities.User;
 import com.example.userservice.repositories.UserRepository;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -7,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -19,14 +22,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        User user = userRepository.findByLogin(login);
-        if (user == null) {
+        Optional<User> user = userRepository.findByLogin(login);
+        if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found with username: " + login);
         }
-        return new org.springframework.security.core.userdetails.User(
-                user.getLogin(),
-                user.getPassword(),
-                AuthorityUtils.createAuthorityList("ROLE_USER")
-        );
+        return new UserAuthDetails(user.get());
     }
 }

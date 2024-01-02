@@ -4,25 +4,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:;base64,=">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css" crossorigin="">
     <link rel="stylesheet" href="/static/user/css/login-page.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+          crossorigin="anonymous">
     <title>Вход</title>
 </head>
 <body>
+
+<div th:if="${param.logout}">
+    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <img src="..." class="rounded me-2" alt="...">
+            <strong class="me-auto">Выход</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Закрыть"></button>
+        </div>
+        <div class="toast-body">
+            Успешно вышли из аккаунта
+        </div>
+    </div>
+</div>
+
+<div th:if="${param.error}">
+    <div aria-live="polite" aria-atomic="true" class="bg-body-secondary position-relative bd-example-toasts rounded-3">
+        <div class="toast-container top-0 end-0 p-3">
+            <div class="toast">
+                <div class="toast-header">
+                    <img src="..." class="rounded me-2" alt="...">
+                    <strong class="me-auto">Ошибка</strong>
+                </div>
+                <div class="toast-body">
+                    Неверный логин или пароль!
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="login">
     <img src="/static/user/img/login-bg.jpg" alt="image" class="login__bg">
 
-    <form method="post" th:action="@{/login}" class="login__form">
+
+    <form  method="post" th:action="@{/login}" class="login__form">
         <h1 class="login__title">Войти</h1>
 
         <div class="login__inputs">
             <div class="login__box">
-                <input id="username" type="text" placeholder="Почта" required class="login__input">
+                <input id="username" name="username" type="text" placeholder="Почта" required class="login__input">
                 <i class="ri-mail-fill"></i>
             </div>
 
             <div class="login__box">
-                <input id="password" type="password" placeholder="Пароль" required class="login__input">
+                <input id="password" name="password" type="password" placeholder="Пароль" required class="login__input">
                 <i class="ri-lock-2-fill"></i>
             </div>
         </div>
@@ -34,5 +70,8 @@
         </div>
     </form>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
 </body>
-</html>

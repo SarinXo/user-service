@@ -1,5 +1,6 @@
 package com.example.userservice.entities;
 
+import com.example.userservice.dto.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -20,17 +21,18 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Entity
-@Table(name = "users")
+@Builder
+@Table(name = "users", schema = "app")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "farmer_id")
-    private int farmerId;
+    private Integer id;
     @Column(unique = true)
     private String login;
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Column(name = "farmer_id")
+    private Integer farmerId;
 }

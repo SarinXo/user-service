@@ -5,13 +5,17 @@ spring:
   application:
     name: user-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/user-service-db
+    url: jdbc:postgresql://localhost:5444/app-db?currentSchema=app
     username: admin
     password: admin
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      dialect: org.hibernate.dialect.PostgreSQLDialect
-      ddl-auto: update
+      ddl-auto: update # или create-drop, validate, none, в зависимости от ваших требований
+    show-sql: true # выводить SQL-запросы в лог
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 eureka:
   instance:
@@ -25,3 +29,4 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security: trace

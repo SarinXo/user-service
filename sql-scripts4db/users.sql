@@ -20,6 +20,16 @@ INSERT INTO users_schema.users (login, password, role)
 ('user9', 'password9', 'USER'),
 ('user10', 'password10', 'USER');
 
-INSERT INTO users_schema.users (login, password, role)
+INSERT INTO app.users (login, password, role)
 VALUES
 ('admin', 'admin', 'ADMIN');
+
+INSERT app.users (login, password, role)
+VALUES
+    ('admin', 'admin', 'ADMIN');
+
+UPDATE app.users
+SET role =  SUBSTRING(role FROM 6);
+
+UPDATE app.users
+SET role = 'ROLE_' || role;

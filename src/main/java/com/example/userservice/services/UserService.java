@@ -1,20 +1,20 @@
 package com.example.userservice.services;
 
 
-import com.example.userservice.dto.UserRequest;
+import com.example.userservice.dto.UserDto;
 import com.example.userservice.entities.User;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface UserService {
 
-    User getUser(String login);
+    User getUserByLogin(String login);
 
-    User addUser(UserRequest userRequest);
+    User addUser(UserDto userDto);
 
     Boolean isExist(String login);
 
-    Boolean isCorrectUser(UserRequest userRequest);
+    Boolean isCorrectUser(UserDto userDto);
 
-
+    List<User> findAll();
 }

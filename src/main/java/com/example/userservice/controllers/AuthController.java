@@ -1,14 +1,17 @@
 package com.example.userservice.controllers;
 
-import com.example.userservice.services.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-@Controller
-public class AuthController {
-    private final UserService userService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
+@Controller
+@RequiredArgsConstructor
+public class AuthController {
+
+
+    @GetMapping("/all-good")
+    public String test(){
+        return "all-good";
     }
 
     @GetMapping("/login")
@@ -16,8 +19,4 @@ public class AuthController {
         return "login-page";
     }
 
-    @GetMapping("/users/test")
-    public String test(){
-        return "all-good";
-    }
 }
