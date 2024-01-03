@@ -39,7 +39,8 @@ public class SecurityConfig {
 				.authorizeHttpRequests((requests) ->
 						requests
 							.requestMatchers("/users/**").hasAuthority("ROLE_USER")
-							.anyRequest().permitAll()
+							.requestMatchers("/static/**").permitAll()
+							.anyRequest().authenticated()
 				)
 				.authenticationManager(myAuthenticationManager())
 				.formLogin((form) ->

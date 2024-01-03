@@ -23,11 +23,11 @@ public class UserController {
         this.userService = userServiceImpl;
     }
 
-    @GetMapping("/{login}")
+/*    @GetMapping("/{login}")
     public ResponseEntity<User> getUser(@PathVariable String login) {
         User user = userService.getUserByLogin(login);
         return ResponseEntity.ok(user);
-    }
+    }*/
 
     @PostMapping()
     public ResponseEntity<User> addUser(@RequestBody UserDto userDto) {

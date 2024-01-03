@@ -3,7 +3,6 @@ package com.example.userservice.handlers;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -15,11 +14,8 @@ import java.util.Collection;
 
 @Component
 public class AuthSuccessHandler implements AuthenticationSuccessHandler {
-
-    @Value("${server.port}")
-    private String port;
     SimpleUrlAuthenticationSuccessHandler userSuccessHandler =
-            new SimpleUrlAuthenticationSuccessHandler("http://localhost:17957/user-service/all-good");
+            new SimpleUrlAuthenticationSuccessHandler("/users/page");
     SimpleUrlAuthenticationSuccessHandler adminSuccessHandler =
             new SimpleUrlAuthenticationSuccessHandler("http://localhost:17957/admin-service/admin/homepage");
 

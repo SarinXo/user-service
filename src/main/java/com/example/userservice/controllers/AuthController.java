@@ -8,12 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequiredArgsConstructor
 public class AuthController {
 
-
-    @GetMapping("/all-good")
-    public String test(){
-        return "all-good";
-    }
-
     @GetMapping("/login")
     public String login(){
         return "login-page";
