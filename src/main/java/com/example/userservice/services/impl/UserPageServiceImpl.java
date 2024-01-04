@@ -43,7 +43,7 @@ public class UserPageServiceImpl implements UserPageService {
             String name = farmerService.findFarmerById(feedback.getFarmerId()).getName();
             names.add(name);
         }
-
+        model.addAttribute("user", user);
         model.addAttribute("farmer", farmer);
         model.addAttribute("feedbacks", feedbacks);
         model.addAttribute("names", names);
