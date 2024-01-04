@@ -15,11 +15,11 @@ import java.util.List;
 
 @RestController()
 @RequestMapping("/users")
-public class UserController {
+public class UserRestController {
 
     private final UserService userService;
 
-    public UserController(UserService userServiceImpl) {
+    public UserRestController(UserService userServiceImpl) {
         this.userService = userServiceImpl;
     }
 

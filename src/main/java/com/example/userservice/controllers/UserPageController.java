@@ -17,11 +17,27 @@ public class UserPageController {
     private final UserPageService userPageServiceImpl;
 
     @GetMapping("/page")
-    public String giveUserPage(
+    public String userPage(
             @RequestParam(required = false) String login,
             Model model){
         model = userPageServiceImpl.setProperties4UserPage(login, model);
         return "user-page";
+    }
+
+    @GetMapping("/stat")
+    public String userStatistic(Model model){
+
+        return "stat-page";
+    }
+
+    @GetMapping("/market")
+    public String marketplace(){
+        return "market-page";
+    }
+
+    @GetMapping("/predict")
+    public String predictStats(){
+        return "predict-page";
     }
 
 }
