@@ -33,3 +33,10 @@ SET role =  SUBSTRING(role FROM 6);
 
 UPDATE app.users
 SET role = 'ROLE_' || role;
+
+INSERT INTO app.weight_statistics (pig_id, date_collection_day, weight)
+    VALUES
+    (7, '2023-01-20', 142.1),
+    (8, '2023-01-20', 111.7),
+    (9, '2023-01-20', 182.3),
+    (10, '2023-01-20', 99.7);

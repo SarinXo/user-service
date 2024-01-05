@@ -6,6 +6,7 @@
           rel="stylesheet"
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
           crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/static/user/css/main-style.css">
     <title>Title</title>
 </head>
 
@@ -13,8 +14,68 @@
     <div id="header"></div>
 </header>
 
-<body>
+<body class="bg-image">
+    <div class="container mt-4">
 
+        <div class="col-md-9">
+            <div class="info">
+                <h2>Информация о вашей ферме</h2>
+                <span>Электронная почта:</span>
+                <p><a th:href=" ${'mailto:' + farm.email}" th:text="${farm.email}"></a>
+                </p><span>Описание:</span>
+                <p><a th:text="${farm.description}"></a></p>
+                <span>Адрес:</span>
+                <p><a th:text="${farm.address}"></a></p>
+                <span>Лицензия:</span>
+                <p><a th:text="${farm.license}"></a></p>
+                <span>Счет в рублях:</span>
+                <p><a th:text="${farm.money}"></a></p>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="info">
+                <h2>Зерно на складе</h2>
+                <div class="info" th:each="stern : ${sterns}">
+                    <span>Тип зерна</span>
+                    <p><a th:text="${stern.type}"></a></p>
+                    <span>Вес в килограммах</span>
+                    <p><a th:text="${stern.weight}"></a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="info">
+                <h2>Свиньи в стойле</h2>
+                <div class="info" th:each="pig, iterStat : ${pigs}">
+                    <span>Порода</span>
+                    <p><a th:text="${pig.breed}"></a></p>
+                    <span>Дата рождения</span>
+                    <p><a th:text="${pig.dateOfBirthday}"></a></p>
+                    <span>Пол</span>
+                    <p><a th:text="${pig.gender}"></a></p>
+                    <span>Пол</span>
+                    <p><a th:text="${pig.gender}"></a></p>
+                    <span>Вес</span>
+                    <p><a th:text="${weights[iterStat.index]}"></a></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="info">
+                <h2>Откормочные дни</h2>
+                <div class="info" th:each="fatteningDay : ${fatteningDays}">
+                    <span>Дата начала</span>
+                    <p><a th:text="${fatteningDay.dateStart}"></a></p>
+                    <span>Дата конца</span>
+                    <p><a th:text="${fatteningDay.dateEnd}"></a></p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="/static/user/js/header.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"

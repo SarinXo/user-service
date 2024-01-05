@@ -1,0 +1,24 @@
+.container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: "Concert One", cursive;
+}
+
+.bg-image {
+    background-image: url('https://bogatyr.club/uploads/posts/2023-03/thumbs/1679025977_bogatyr-club-p-fon-ferma-bez-zhivotnikh-foni-oboi-26.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed; /* фиксирует картинку (прибыль)*/
+    background-repeat: no-repeat;
+    margin-bottom: 0;
+}
+
+.info {
+    margin: 10px;
+    padding: 0 15px;
+    border-radius: 10px;
+    background-color: #cbffda;
+    font-family: "Concert One", cursive;
+}

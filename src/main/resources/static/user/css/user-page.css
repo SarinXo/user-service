@@ -18,15 +18,12 @@
     margin-bottom: 0;
 }
 
-body {
-    font-family: "Concert One", cursive;
-}
-
 .user-info, .user-comments {
     margin: 10px;
     padding: 0 15px;
     border-radius: 10px;
-    background-color: #cbffda; /* Убрать потом (чисто для отладки)  /
+    background-color: #cbffda;
+    font-family: "Concert One", cursive;
 }
 
 .user-email {
@@ -50,11 +47,11 @@ body {
     display: table;
 }
 
-/ .user-comments img {
+ .user-comments img {
     float: left;
     margin-right: 20px;
     border-radius: 50%;
-} /
+}
 
 .user-comments span {
     font-size: 20px;
@@ -66,9 +63,9 @@ body {
       text-align: center;
     }
 
-    / .user-comments img {
+    .user-comments img {
       margin: auto;
       float: none;
       display: block;
-    } */
+    }
 }
