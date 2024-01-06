@@ -5,7 +5,6 @@ import com.example.userservice.entities.Farm;
 import com.example.userservice.entities.Farmer;
 import com.example.userservice.entities.FatteningDay;
 import com.example.userservice.entities.Feedback;
-import com.example.userservice.entities.Order;
 import com.example.userservice.entities.Pig;
 import com.example.userservice.entities.Product;
 import com.example.userservice.entities.Stern;
@@ -30,6 +29,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -50,6 +51,8 @@ public class PageServiceImpl implements PageService {
 
     private static final Integer STERN = 1;
     private static final Integer PIG = 2;
+    private static final Double FATTENING_DAY = 0.04;
+    private static final Double USUAL_DAY = 0.025;
 
     @Override
     public Model setProperties4UserPage(@Nullable String login, Model model){
@@ -111,10 +114,6 @@ public class PageServiceImpl implements PageService {
     public Model setProperties4Market(Model model, int page, int size,
                                       boolean sortByName, boolean sortByPrice) {
 
-        String login = getUserLogin();
-        User user = userServiceImpl.getUserByLogin(login);
-        Farmer farmer = farmerServiceImpl.findFarmerById(user.getFarmerId());
-
         Pageable pageable = PageRequest.of(page - 1, size);
 
         Page<Product> pageTuts;
@@ -158,5 +157,90 @@ public class PageServiceImpl implements PageService {
                 farmer.getPatronymic().substring(0, 1);
     }
 
+    @Override
+    public Model setProperties4Predict(Model model) {
+
+        String login = getUserLogin();
+        User user = userServiceImpl.getUserByLogin(login);
+        Farmer farmer = farmerServiceImpl.findFarmerById(user.getFarmerId());
+        Farm farm = farmServiceImpl.findFarmById(farmer.getFarmId());
+        List<FatteningDay> fatteningDays = fatteningDayServiceImpl.findDaysByFarmCode(farm.getFarmCode());
+        List<Stern> sterns = sternServiceImpl.findSternsByFarmerId(farmer.getId());
+        List<Pig> pigs = pigServiceImpl.findPigsByFarmerId(farmer.getId());
+        double sternWeight = sterns.stream()
+                .mapToDouble(Stern::getWeight)
+                .sum();// вес корма всего
+        double meatWeight = pigs.stream()
+                .mapToDouble(this::getLastPigWeight)
+                .sum();// вес мяса всего
+        LocalDate endDay = dayToEndCorm(sternWeight, meatWeight, fatteningDays);// на сколько дней хватит корма с учетом откормочных дней
+        boolean cormAlarm = ChronoUnit.DAYS.between(LocalDate.now(), endDay) < 5;
+        double plusMeat = sternWeight / (USUAL_DAY * 100.);// прибавка в весе свиней (в кг мяса)
+        List<Product> products = productServiceImpl.findAll();
+
+        double medianMeatPrice = medianMeatPrice(products); // средняя цена на мясо на рынке за кг
+        double medianSternPrice = medianSternPrice(products);// средняя цена на корм на рынке за кг
+        double profit = (plusMeat * medianMeatPrice) - (sternWeight * medianSternPrice); // расчетная прибыль
+        boolean isProfitBad  = profit <=100; // расчетная прибыль
+
+        model.addAttribute("sternWeight", sternWeight);
+        model.addAttribute("cormAlarm", cormAlarm);
+        model.addAttribute("meatWeight", meatWeight);
+        model.addAttribute("endDay", endDay);
+        model.addAttribute("plusMeat", plusMeat);
+        model.addAttribute("medianMeatPrice", medianMeatPrice);
+        model.addAttribute("medianSternPrice", medianSternPrice);
+        model.addAttribute("profit", profit);
+        model.addAttribute("isProfitBad", isProfitBad);
+
+        return null;
+    }
+
+    private double medianMeatPrice(List<Product> products) {
+        return products.stream()
+                .filter(product -> PIG.equals(product.getType()))
+                .mapToDouble(product -> {
+                    Pig pig = pigServiceImpl.findPigById(product.getProductId());
+                    return getLastPigWeight(pig);
+                })
+                .sum();
+    }
+
+    private double medianSternPrice(List<Product> products) {
+        return products.stream()
+                .filter(product -> STERN.equals(product.getType()))
+                .mapToDouble(product -> {
+                    Stern stern = sternServiceImpl.findSternById(product.getProductId());
+                    return stern.getWeight();
+                })
+                .sum();
+    }
+
+
+
+    private LocalDate dayToEndCorm(Double allCorm, Double pigsWeight, List<FatteningDay> fatteningDays){
+        LocalDate start = LocalDate.now();
+        Double minFeedConsumptionPerDay = pigsWeight * USUAL_DAY;
+
+        long predictDays = (long)(allCorm / minFeedConsumptionPerDay);
+        LocalDate end = start.plusDays(predictDays);
+        long days = 0;
+        for(var fatteningDay : fatteningDays){
+            days+=intersect(start, end, fatteningDay);
+        }
+        predictDays -= Math.ceil((pigsWeight * (FATTENING_DAY - USUAL_DAY)) / minFeedConsumptionPerDay);
+        return start.plusDays(predictDays);
+    }
+
+    private long intersect(LocalDate start, LocalDate end, FatteningDay fatteningDay){
+        return ChronoUnit.DAYS.between(
+                (start.isAfter(fatteningDay.getDateStart())
+                    ? start
+                    : fatteningDay.getDateStart()),
+                (end.isBefore(fatteningDay.getDateEnd())
+                    ? end
+                    : fatteningDay.getDateEnd())
+        );
+    }
 
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/users")
-public class UserPageController {
+public class PagesController {
 
     private final PageService pageServiceImpl;
 
@@ -44,7 +44,8 @@ public class UserPageController {
     }
 
     @GetMapping("/predict")
-    public String predictStats(){
+    public String predictStats(Model model){
+        model = pageServiceImpl.setProperties4Predict(model);
         return "predict-page";
     }
 

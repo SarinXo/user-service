@@ -2,7 +2,6 @@ package com.example.userservice.services.impl;
 
 import com.example.userservice.entities.Farm;
 import com.example.userservice.entities.Farmer;
-import com.example.userservice.entities.Order;
 import com.example.userservice.entities.Pig;
 import com.example.userservice.entities.Product;
 import com.example.userservice.entities.Stern;
@@ -19,11 +18,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.SpringSecurityCoreVersion;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -42,6 +41,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<Product> findAll(Pageable pageable) {
         return productRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<Product> findAll() {
+        return productRepository.findAll();
     }
 
     @Override
