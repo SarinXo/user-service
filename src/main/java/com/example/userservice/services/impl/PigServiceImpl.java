@@ -19,4 +19,9 @@ public class PigServiceImpl implements PigService {
     public List<Pig> findPigsByFarmerId(Integer id) {
         return pigRepository.findPigsByFarmerId(id);
     }
+
+    @Override
+    public Pig findPigById(Integer id) {
+        return pigRepository.findPigById(id);
+    }
 }

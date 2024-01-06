@@ -17,4 +17,6 @@ public interface UserService {
     Boolean isCorrectUser(UserDto userDto);
 
     List<User> findAll();
+
+    User getUserById(Integer id);
 }

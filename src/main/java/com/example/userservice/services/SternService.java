@@ -8,4 +8,6 @@ import java.util.List;
 public interface SternService {
 
     List<Stern> findSternsByFarmerId(Integer farmerId);
+
+    Stern findSternById(Integer id);
 }

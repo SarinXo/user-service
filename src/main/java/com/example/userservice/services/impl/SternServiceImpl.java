@@ -19,4 +19,9 @@ public class SternServiceImpl implements SternService {
     public List<Stern> findSternsByFarmerId(Integer farmerId) {
         return sternRepository.findSternsByFarmerId(farmerId);
     }
+
+    @Override
+    public Stern findSternById(Integer id) {
+        return sternRepository.findSternById(id);
+    }
 }

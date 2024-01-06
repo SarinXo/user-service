@@ -1,0 +1,5 @@
+<a th:fragment="paging(pageNum, label, tooltip, nameSort, priceSort)" class="page-link"
+   th:href="@{'/users/market?page=' + ${pageNum} + (${nameSort != null ? '&sortByName=on' : ''}) + (${priceSort != null ? '&sortByPrice=on' : ''})}"
+   th:title="${tooltip}" rel="tooltip">
+  [[${label}]]
+</a>

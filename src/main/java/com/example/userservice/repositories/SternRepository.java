@@ -8,4 +8,7 @@ import java.util.List;
 public interface SternRepository extends JpaRepository<Stern, Integer> {
 
     List<Stern> findSternsByFarmerId(Integer farmerId);
+
+    Stern findSternById(Integer id);
+
 }

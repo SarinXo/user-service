@@ -1,18 +1,20 @@
 package com.example.userservice.services.impl;
 
+import com.example.userservice.dto.ProductDTO;
 import com.example.userservice.entities.Farm;
 import com.example.userservice.entities.Farmer;
 import com.example.userservice.entities.FatteningDay;
 import com.example.userservice.entities.Feedback;
 import com.example.userservice.entities.Order;
 import com.example.userservice.entities.Pig;
+import com.example.userservice.entities.Product;
 import com.example.userservice.entities.Stern;
 import com.example.userservice.entities.User;
 import com.example.userservice.services.FarmService;
 import com.example.userservice.services.FarmerService;
 import com.example.userservice.services.FatteningDayService;
 import com.example.userservice.services.FeedbacksService;
-import com.example.userservice.services.OrderService;
+import com.example.userservice.services.ProductService;
 import com.example.userservice.services.PageService;
 import com.example.userservice.services.PigService;
 import com.example.userservice.services.SternService;
@@ -23,12 +25,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -44,7 +46,10 @@ public class PageServiceImpl implements PageService {
     private final PigService pigServiceImpl;
     private final WeightService weightServiceImpl;
     private final FatteningDayService fatteningDayServiceImpl;
-    private final OrderService orderServiceImpl;
+    private final ProductService productServiceImpl;
+
+    private static final Integer STERN = 1;
+    private static final Integer PIG = 2;
 
     @Override
     public Model setProperties4UserPage(@Nullable String login, Model model){
@@ -103,8 +108,8 @@ public class PageServiceImpl implements PageService {
     }
 
     @Override
-    public Model setProperties4Market(Model model,
-         int page, int size, boolean sortByName, boolean sortByPrice) {
+    public Model setProperties4Market(Model model, int page, int size,
+                                      boolean sortByName, boolean sortByPrice) {
 
         String login = getUserLogin();
         User user = userServiceImpl.getUserByLogin(login);
@@ -112,17 +117,45 @@ public class PageServiceImpl implements PageService {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        Page<Order> pageTuts;
+        Page<Product> pageTuts;
         if (sortByName) {
-            pageTuts = orderServiceImpl.findByIdContainingIgnoreCase("type", pageable);
+            pageTuts = productServiceImpl.findAllByOrderByType(pageable);
         } else if(sortByPrice) {
-            pageTuts = orderServiceImpl.findByIdContainingIgnoreCase("cost", pageable);
-        } else{
-            pageTuts = orderServiceImpl.findAll(pageable);
+            pageTuts = productServiceImpl.findAllByOrderByCost(pageable);
+        } else {
+            pageTuts = productServiceImpl.findAll(pageable);
+        }
+        List<Product> products =  pageTuts.getContent();
+        // лист инфы которая должна быть в таблице
+        List<ProductDTO> productDtos = new ArrayList<>(products.size());
+        for(var product : products){
+            Farmer owner = farmerServiceImpl.findFarmerById(product.getFarmerId());
+            //userId = farmerId condition :-)
+            User ownerUser = userServiceImpl.getUserById(owner.getId());
+            if(Objects.equals(product.getType(), PIG)){
+                Pig pig = pigServiceImpl.findPigById(product.getProductId());
+                Double weight = getLastPigWeight(pig);
+                ProductDTO productDTO =
+                        new ProductDTO(pig.getBreed(), weight, "Свинья" , getFio(owner), ownerUser.getLogin(), product.getCost());
+                productDtos.add(productDTO);
+            } else if (Objects.equals(product.getType(), STERN)) {
+                Stern stern = sternServiceImpl.findSternById(product.getProductId());
+                ProductDTO productDTO =
+                        new ProductDTO(stern.getType(), stern.getWeight(), "Зерно", getFio(owner), ownerUser.getLogin(), product.getCost());
+                productDtos.add(productDTO);
+            }
         }
         model.addAttribute("productPage", pageTuts);
+        model.addAttribute("currentPage", pageable.getPageNumber() + 1);
+        model.addAttribute("productDtos", productDtos);
 
         return model;
+    }
+
+    private String getFio(Farmer farmer){
+        return farmer.getName() + " " +
+                farmer.getSurname().substring(0, 1) + " " +
+                farmer.getPatronymic().substring(0, 1);
     }
 
 

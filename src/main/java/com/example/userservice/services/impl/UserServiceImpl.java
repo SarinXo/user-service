@@ -7,7 +7,6 @@ import com.example.userservice.handlers.exceptions.UserError;
 import com.example.userservice.repositories.UserRepository;
 import com.example.userservice.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,5 +53,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public User getUserById(Integer id) {
+        return userRepository.findUserById(id);
     }
 }

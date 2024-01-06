@@ -31,11 +31,15 @@ public class UserPageController {
 
     @GetMapping("/market")
     public String marketplace(Model model,
-                              @RequestParam(defaultValue = "1") int page,
-                              @RequestParam(defaultValue = "5") int size,
-                              @RequestParam(defaultValue = "false") boolean sortByName,
-                              @RequestParam(defaultValue = "false") boolean sortByPrice){
-        model = pageServiceImpl.setProperties4Market(model, page, size, sortByName, sortByPrice);
+                              @RequestParam(required = false, defaultValue = "1") int page,
+                              @RequestParam(required = false, defaultValue = "5") int size,
+                              @RequestParam(required = false, defaultValue = "off") String sortByName,
+                              @RequestParam(required = false, defaultValue = "off") String sortByPrice){
+        boolean costil1 = sortByName.equals("on");
+        boolean costil2 = sortByPrice.equals("on");
+        model.addAttribute("sortByName", costil1);
+        model.addAttribute("sortByPrice", costil2);
+        model = pageServiceImpl.setProperties4Market(model, page, size, costil1, costil2);
         return "market-page";
     }
 

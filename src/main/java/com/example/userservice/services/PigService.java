@@ -8,4 +8,6 @@ import java.util.List;
 public interface PigService {
 
     List<Pig> findPigsByFarmerId(Integer id);
+
+    Pig findPigById(Integer id);
 }
