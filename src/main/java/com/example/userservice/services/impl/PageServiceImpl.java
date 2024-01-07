@@ -1,5 +1,6 @@
 package com.example.userservice.services.impl;
 
+import com.example.userservice.dto.TablePig;
 import com.example.userservice.entities.Farm;
 import com.example.userservice.entities.Farmer;
 import com.example.userservice.entities.FatteningDay;
@@ -22,6 +23,10 @@ import com.example.userservice.services.UserService;
 import com.example.userservice.services.WeightService;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -29,6 +34,8 @@ import org.springframework.ui.Model;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -45,12 +52,14 @@ public class PageServiceImpl implements PageService {
     private final WeightService weightServiceImpl;
     private final FatteningDayService fatteningDayServiceImpl;
     private final SternForSaleService sternForSaleServiceImpl;
-    private final PigForSaleService pigForSaleService;
+    private final PigForSaleService pigForSaleServiceImpl;
 
     private static final Integer STERN = 1;
     private static final Integer PIG = 2;
     private static final Double FATTENING_DAY = 0.04;
     private static final Double USUAL_DAY = 0.025;
+
+
 
     @Override
     public Model setProperties4UserPage(@Nullable String login, Model model){
@@ -91,7 +100,7 @@ public class PageServiceImpl implements PageService {
         List<Stern> sterns = sternServiceImpl.findSternsByFarmerId(farmer.getId());
         List<Pig> pigs = pigServiceImpl.findPigsByFarmerId(farmer.getId());
         List<SternForSale> sternsOnMarket = sternForSaleServiceImpl.getByFarmerId(farmer.getId());
-        List<PigForSale> pigForSales = pigForSaleService.getByFarmerId(farmer.getId());
+        List<PigForSale> pigForSales = pigForSaleServiceImpl.getByFarmerId(farmer.getId());
         List<Pig> dtosForSellingPigs = pigForSales.stream()
                 .map((p) -> pigServiceImpl.findPigById(p.getPigId()))
                 .toList();
@@ -115,6 +124,38 @@ public class PageServiceImpl implements PageService {
         model.addAttribute("dtosForSellingPigs", dtosForSellingPigs);
         return model;
     }
+
+    @Override
+    public Model setProperties4MarketPigs(Model model, int page, int size,
+                                          String sortByName, String sortByPrice,
+                                          String keyWord) {
+        boolean isNameSort = sortByName.equals("on");
+        boolean isPriceSort = sortByPrice.equals("on");
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        Page<PigForSale> pageToSale;
+        if(keyWord.equals(Strings.EMPTY)){
+            pageToSale = pigForSaleServiceImpl.findAll(pageable);
+        } else {
+            pageToSale = pigForSaleServiceImpl.findAllByKeywordAndSortWord(keyWord, pageable);
+        }
+        List<TablePig> sellingPigs = new ArrayList<>(pageToSale.stream()
+                .map(pigForSale -> new TablePig(pigServiceImpl.findPigById(pigForSale.getPigId()), pigForSale) )
+                .toList());
+
+        if (isNameSort) {
+            sellingPigs.sort(Comparator.comparing(TablePig::getBreed));
+        } else if(isPriceSort) {
+            sellingPigs.sort(Comparator.comparing(TablePig::getCost));
+        }
+
+        model.addAttribute("sellingPigs", sellingPigs);
+
+        return model;
+    }
+
+    private int getPigCost
 
     private Double getLastPigWeight(Pig pig){
         return weightServiceImpl.findCurrentWeightByPigId(pig.getId()).getWeight();

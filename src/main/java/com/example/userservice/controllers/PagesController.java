@@ -45,4 +45,14 @@ public class PagesController {
         return "predict-page";
     }*/
 
+    @GetMapping("/market/pigs")
+    public String marketplace(Model model,
+                              @RequestParam(required = false, defaultValue = "1") int page,
+                              @RequestParam(required = false, defaultValue = "5") int size,
+                              @RequestParam(required = false, defaultValue = "off") String sortByName,
+                              @RequestParam(required = false, defaultValue = "off") String sortByPrice,
+                              @RequestParam(required = false, defaultValue = "") String keyWord) {
+        model = pageServiceImpl.setProperties4MarketPigs(model, page, size, sortByName, sortByPrice, keyWord);
+        return "market-page";
+    }
 }
