@@ -7,15 +7,55 @@
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
           crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/static/user/css/main-style.css">
-    <title>Title</title>
+    <title>Предсказание</title>
 </head>
 
 <header>
     <div id="header"></div>
 </header>
 
-<body>
+<body class="bg-image">
+<div class="container">
+    <br/>
+    <h3 class="text-center md-3">Предположения на основе данных из нашего магазина</h3>
+    <br/>
+    <div class="container mt-4">
 
+        <div class="col-md-9">
+            <div class="info">
+                <h2>Вам хватает корма до этой даты:</h2>
+                <p><a th:text="${endDay}"></a></p>
+                <!--<div th::if="${cormAlarm}" th:text="Рассмотрите возможность докупить корм! У вас осталось менее 5 дней до конца корма!">-->
+                <br>
+                <span>Средняя цена за корм сейчас:</span>
+                <p><a th:text="${medianSternPrice}"></a></p>
+                <span>Масса всего корма на складе:</span>
+                <p><a th:text="${sternWeight}+ ' кг'"></a></p>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="info">
+                <h2>Средняя цена мяса сейчас:</h2>
+                <p><a th:text="${medianMeatPrice}"></a>
+                <span>Вы сейчас имеете данное количество мяса:</span>
+                <p><a th:text="${meatWeight}"></a></p>
+                <span>Ожидаемый прирост, после потребления всего корма</span>
+                <p><a th:text="'+' + ${plusMeat} + ' кг'"></a></p>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="info">
+                <h2>Предположительно вы сможете заработать:</h2>
+                <p><a th:text="${profit} + ' руб'"></a></p>
+                <!--<div th::if="${isProfitBad}" th:text="Прибыль мала! Рассмотрите смену стратегии производства!">-->
+            </div>
+        </div>
+
+    </div>
+
+</div>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="/static/user/js/header.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"

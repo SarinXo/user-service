@@ -24,4 +24,9 @@ public class PigServiceImpl implements PigService {
     public Pig findPigById(Integer id) {
         return pigRepository.findPigById(id);
     }
+
+    @Override
+    public void addPig(Pig pig) {
+        pigRepository.save(pig);
+    }
 }

@@ -8,4 +8,6 @@ import java.util.List;
 public interface FatteningDayService {
 
     List<FatteningDay> findDaysByFarmCode(Integer farmCode);
+
+    void addDay(FatteningDay fatteningDay);
 }

@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 
@@ -31,8 +32,12 @@ public class Weight {
     @Column(name = "pig_id")
     private Integer pigId;
     @Column(name = "date_collection_day")
-    private Date dateCollectionDay;
+    private LocalDate dateCollectionDay;
     private Double weight;
+
+    public Weight(double v) {
+        this.weight = v;
+    }
 
     @Override
     public boolean equals(Object o) {

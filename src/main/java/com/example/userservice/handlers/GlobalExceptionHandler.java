@@ -1,9 +1,11 @@
 package com.example.userservice.handlers;
 
+import com.example.userservice.handlers.exceptions.FeedbackError;
 import com.example.userservice.handlers.exceptions.UserError;
 import com.example.userservice.handlers.exceptions.WeightError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,6 +29,10 @@ public class GlobalExceptionHandler {
         modelAndView.addObject("errorCode", HttpStatus.INTERNAL_SERVER_ERROR.value());
         modelAndView.setViewName("error-page");
         return modelAndView;
+    }
+    @ExceptionHandler(FeedbackError.class)
+    public ResponseEntity<String> handleFeedbackError(FeedbackError e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
 }

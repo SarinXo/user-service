@@ -16,4 +16,9 @@ public class FarmServiceImpl implements FarmService {
     public Farm findFarmById(Integer farmId) {
         return farmRepository.findFarmByFarmCode(farmId);
     }
+
+    @Override
+    public void update(Farm farm) {
+        farmRepository.save(farm);
+    }
 }

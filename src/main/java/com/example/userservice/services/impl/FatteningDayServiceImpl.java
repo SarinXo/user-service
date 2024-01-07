@@ -16,9 +16,13 @@ public class FatteningDayServiceImpl implements FatteningDayService {
 
     private final FatteningDayRepository fatteningDayRepository;
 
-
     @Override
     public List<FatteningDay> findDaysByFarmCode(Integer farmCode) {
         return fatteningDayRepository.findByFarmCode(farmCode);
+    }
+
+    @Override
+    public void addDay(FatteningDay fatteningDay) {
+        fatteningDayRepository.save(fatteningDay);
     }
 }

@@ -1,29 +1,27 @@
 package com.example.userservice.services.impl;
 
-import com.example.userservice.dto.ProductDTO;
 import com.example.userservice.entities.Farm;
 import com.example.userservice.entities.Farmer;
 import com.example.userservice.entities.FatteningDay;
 import com.example.userservice.entities.Feedback;
 import com.example.userservice.entities.Pig;
-import com.example.userservice.entities.Product;
+import com.example.userservice.entities.PigForSale;
 import com.example.userservice.entities.Stern;
+import com.example.userservice.entities.SternForSale;
 import com.example.userservice.entities.User;
 import com.example.userservice.services.FarmService;
 import com.example.userservice.services.FarmerService;
 import com.example.userservice.services.FatteningDayService;
 import com.example.userservice.services.FeedbacksService;
-import com.example.userservice.services.ProductService;
 import com.example.userservice.services.PageService;
+import com.example.userservice.services.PigForSaleService;
 import com.example.userservice.services.PigService;
+import com.example.userservice.services.SternForSaleService;
 import com.example.userservice.services.SternService;
 import com.example.userservice.services.UserService;
 import com.example.userservice.services.WeightService;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -31,7 +29,6 @@ import org.springframework.ui.Model;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -47,7 +44,8 @@ public class PageServiceImpl implements PageService {
     private final PigService pigServiceImpl;
     private final WeightService weightServiceImpl;
     private final FatteningDayService fatteningDayServiceImpl;
-    private final ProductService productServiceImpl;
+    private final SternForSaleService sternForSaleServiceImpl;
+    private final PigForSaleService pigForSaleService;
 
     private static final Integer STERN = 1;
     private static final Integer PIG = 2;
@@ -92,6 +90,14 @@ public class PageServiceImpl implements PageService {
         Farm farm = farmServiceImpl.findFarmById(farmer.getFarmId());
         List<Stern> sterns = sternServiceImpl.findSternsByFarmerId(farmer.getId());
         List<Pig> pigs = pigServiceImpl.findPigsByFarmerId(farmer.getId());
+        List<SternForSale> sternsOnMarket = sternForSaleServiceImpl.getByFarmerId(farmer.getId());
+        List<PigForSale> pigForSales = pigForSaleService.getByFarmerId(farmer.getId());
+        List<Pig> dtosForSellingPigs = pigForSales.stream()
+                .map((p) -> pigServiceImpl.findPigById(p.getPigId()))
+                .toList();
+        List<String> nameSterns = sternsOnMarket.stream()
+                .map((st) -> sternServiceImpl.findSternById(st.getSternId()).getType())
+                .toList();
         // It is better to take the list of weights in one query, but it needs thinking, and time is short
         List<Double> weights = pigs.stream()
                 .map(this::getLastPigWeight)
@@ -103,6 +109,10 @@ public class PageServiceImpl implements PageService {
         model.addAttribute("pigs", pigs);
         model.addAttribute("weights", weights);
         model.addAttribute("fatteningDays", fatteningDays);
+        model.addAttribute("sternsOnMarket", sternsOnMarket);
+        model.addAttribute("nameSterns", nameSterns);
+        model.addAttribute("pigForSales", pigForSales);
+        model.addAttribute("dtosForSellingPigs", dtosForSellingPigs);
         return model;
     }
 
@@ -110,16 +120,19 @@ public class PageServiceImpl implements PageService {
         return weightServiceImpl.findCurrentWeightByPigId(pig.getId()).getWeight();
     }
 
-    @Override
+   /* @Override
     public Model setProperties4Market(Model model, int page, int size,
-                                      boolean sortByName, boolean sortByPrice) {
+                                      String sortByName, String sortByPrice) {
+
+        boolean costil1 = sortByName.equals("on");
+        boolean costil2 = sortByPrice.equals("on");
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
         Page<Product> pageTuts;
-        if (sortByName) {
+        if (costil1) {
             pageTuts = productServiceImpl.findAllByOrderByType(pageable);
-        } else if(sortByPrice) {
+        } else if(costil2) {
             pageTuts = productServiceImpl.findAllByOrderByCost(pageable);
         } else {
             pageTuts = productServiceImpl.findAll(pageable);
@@ -147,9 +160,11 @@ public class PageServiceImpl implements PageService {
         model.addAttribute("productPage", pageTuts);
         model.addAttribute("currentPage", pageable.getPageNumber() + 1);
         model.addAttribute("productDtos", productDtos);
+        model.addAttribute("sortByName", costil1);
+        model.addAttribute("sortByPrice", costil2);
 
         return model;
-    }
+    }*/
 
     private String getFio(Farmer farmer){
         return farmer.getName() + " " +
@@ -157,7 +172,7 @@ public class PageServiceImpl implements PageService {
                 farmer.getPatronymic().substring(0, 1);
     }
 
-    @Override
+ /*   @Override
     public Model setProperties4Predict(Model model) {
 
         String login = getUserLogin();
@@ -181,15 +196,17 @@ public class PageServiceImpl implements PageService {
         double medianMeatPrice = medianMeatPrice(products); // средняя цена на мясо на рынке за кг
         double medianSternPrice = medianSternPrice(products);// средняя цена на корм на рынке за кг
         double profit = (plusMeat * medianMeatPrice) - (sternWeight * medianSternPrice); // расчетная прибыль
-        boolean isProfitBad  = profit <=100; // расчетная прибыль
+        if(profit < 10_000)
+            profit = -1. * profit;
+        boolean isProfitBad  = profit <= 100; // расчетная прибыль
 
         model.addAttribute("sternWeight", sternWeight);
         model.addAttribute("cormAlarm", cormAlarm);
-        model.addAttribute("meatWeight", meatWeight);
         model.addAttribute("endDay", endDay);
+        model.addAttribute("medianSternPrice", medianSternPrice);
         model.addAttribute("plusMeat", plusMeat);
         model.addAttribute("medianMeatPrice", medianMeatPrice);
-        model.addAttribute("medianSternPrice", medianSternPrice);
+        model.addAttribute("meatWeight", meatWeight);
         model.addAttribute("profit", profit);
         model.addAttribute("isProfitBad", isProfitBad);
 
@@ -214,7 +231,7 @@ public class PageServiceImpl implements PageService {
                     return stern.getWeight();
                 })
                 .sum();
-    }
+    }*/
 
 
 

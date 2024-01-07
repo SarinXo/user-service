@@ -21,6 +21,11 @@ public class WeightServiceImpl implements WeightService {
     public Weight findCurrentWeightByPigId(Integer id) {
         Optional<Weight> weight = weightRepository.findWeightsByPigId(id).stream()
                 .max(Comparator.comparing(Weight::getDateCollectionDay));
-        return  weight.orElseThrow(() -> new WeightError("Pig weight data is not defined"));
+        return weight.orElse(new Weight(0.0));
+    }
+
+    @Override
+    public void save(Weight weight) {
+        weightRepository.save(weight);
     }
 }

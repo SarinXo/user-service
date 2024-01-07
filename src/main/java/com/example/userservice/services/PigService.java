@@ -10,4 +10,6 @@ public interface PigService {
     List<Pig> findPigsByFarmerId(Integer id);
 
     Pig findPigById(Integer id);
+
+    void addPig(Pig pig);
 }

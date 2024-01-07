@@ -18,13 +18,18 @@ $(document).ready(function () {
         $.ajax({
             url: '/users/feedback',
             method: 'POST',
-            contentType: "application/json",
+            contentType: "application/json; charset=utf-8",
             data: JSON.stringify(data),
             beforeSend: function(xhr) {
                 xhr.setRequestHeader(csrfHeader, csrfToken);
             },
             success: function() {
                 window.location.href = '/users/page?login=' + username;
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                var errorMessage = jqXHR.responseText || 'Произошла ошибка';
+
+                toastr.error(errorMessage);
             }
         });
     });

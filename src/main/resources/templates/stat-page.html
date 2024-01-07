@@ -7,7 +7,10 @@
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
           crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/static/user/css/main-style.css">
-    <title>Title</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>Статистика</title>
 </head>
 
 <header>
@@ -15,69 +18,415 @@
 </header>
 
 <body class="bg-image">
-    <div class="container mt-4">
+    <div class="container mt-5">
+        <div class="row">
 
-        <div class="col-md-9">
+        <div class="col-md-2">
+            <!-- Блок с кнопками "Изменить информацию" -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Действия</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Кнопки для изменения информации -->
+                    <button class="btn btn-outline-primary btn-block mb-3 farm-info" data-bs-toggle="modal" data-bs-target="#farmModal"
+                            th:data-farmcode=   "${farm.farmCode}"
+                            th:data-email=      "${farm.email}"
+                            th:data-description="${farm.description}"
+                            th:data-address=    "${farm.address}"
+                            th:data-license=    "${farm.license}"
+                            th:data-money=      "${farm.money}"
+                        >Изменить информация о ферме
+                    </button>
+                    <button class="btn btn-outline-primary btn-block mb-3 stern-info" data-bs-toggle="modal" data-bs-target="#addSternModal">Добавить зерна</button>
+                    <button class="btn btn-outline-primary btn-block mb-3 pig-info" data-bs-toggle="modal" data-bs-target="#addPigModal">Добавить свинью</button>
+                    <button class="btn btn-outline-primary btn-block mb-3 pig-info" data-bs-toggle="modal" data-bs-target="#pigSelectionModal">Обновить вес свинье</button>
+                    <button class="btn btn-outline-primary btn-block mb-3 fat-day-info" data-bs-toggle="modal" data-bs-target="#fatteningDayModal">Добавить откормочные дни</button>
+
+                    <button class="btn btn-outline-primary btn-block mb-3 pig-to-sell" data-bs-toggle="modal" data-bs-target="#pigSaleModal">Выставить на продажу свиней</button>
+                    <button class="btn btn-outline-primary btn-block mb-3 stern-to-sell" data-bs-toggle="modal" data-bs-target="#sternSaleModal">Выставить на продажу зерно</button>
+                    <button class="btn btn-outline-danger btn-block mb-3 stern-back" data-bs-toggle="modal" data-bs-target="#sternOutOfMarketModal">Убрать из продажи зерно</button>
+                    <button class="btn btn-outline-danger btn-block mb-3 pig-back" data-bs-toggle="modal" data-bs-target="#pigOutOfMarketModal">Убрать из продажи свиней</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <!-- Информация о вашей ферме -->
             <div class="info">
                 <h2>Информация о вашей ферме</h2>
-                <span>Электронная почта:</span>
-                <p><a th:href=" ${'mailto:' + farm.email}" th:text="${farm.email}"></a>
-                </p><span>Описание:</span>
-                <p><a th:text="${farm.description}"></a></p>
-                <span>Адрес:</span>
-                <p><a th:text="${farm.address}"></a></p>
-                <span>Лицензия:</span>
-                <p><a th:text="${farm.license}"></a></p>
-                <span>Счет в рублях:</span>
-                <p><a th:text="${farm.money}"></a></p>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Параметр</th>
+                        <th>Значение</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Электронная почта:</td>
+                        <td><a th:href=" ${'mailto:' + farm.email}" th:text="${farm.email}"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Описание:</td>
+                        <td><a th:text="${farm.description}"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Адрес:</td>
+                        <td><a th:text="${farm.address}"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Лицензия:</td>
+                        <td><a th:text="${farm.license}"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Счет в рублях:</td>
+                        <td><a th:text="${farm.money}"></a></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
 
-        <div class="col-md-9">
+            <!-- Зерно на складе -->
             <div class="info">
                 <h2>Зерно на складе</h2>
-                <div class="info" th:each="stern : ${sterns}">
-                    <span>Тип зерна</span>
-                    <p><a th:text="${stern.type}"></a></p>
-                    <span>Вес в килограммах</span>
-                    <p><a th:text="${stern.weight}"></a></p>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Тип зерна</th>
+                        <th>Вес в килограммах</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="stern : ${sterns}">
+                        <td><a th:text="${stern.type}"></a></td>
+                        <td><a th:text="${stern.weight}"></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Свиньи в стойле -->
+            <div class="info">
+                <h2>Свиньи в стойле</h2>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Порода</th>
+                        <th>Дата рождения</th>
+                        <th>Пол</th>
+                        <th>Вес</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="pig, iterStat : ${pigs}">
+                        <td><a th:text="${pig.breed}"></a></td>
+                        <td><a th:text="${pig.dateOfBirthday}"></a></td>
+                        <td><a th:text="${pig.gender}"></a></td>
+                        <td><a th:text="${weights[iterStat.index]}"></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Откормочные дни -->
+            <div class="info">
+                <h2>Откормочные дни</h2>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Дата начала</th>
+                        <th>Дата конца</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="fatteningDay : ${fatteningDays}">
+                        <td><a th:text="${fatteningDay.dateStart}"></a></td>
+                        <td><a th:text="${fatteningDay.dateEnd}"></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Модальное окно изменения фермы -->
+        <div class="modal fade" id="farmModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="farmModalLabel">Изменить информацию о ферме</h5>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Форма внутри модального окна -->
+                        <form id="modify-farm">
+                            <div class="form-group mt-3">
+                                <label for="editEmail">Почта</label>
+                                <input type="email" class="form-control" id="editEmail" name="editEmail" placeholder="Введите почту" required>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="editDescription">Описание</label>
+                                <textarea class="form-control" id="editDescription" name="editDescription" placeholder="Введите описание" required></textarea>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="editAddress">Адрес</label>
+                                <input type="text" class="form-control" id="editAddress" name="editAddress" placeholder="Введите адрес" required>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="editLicense">Лицензия</label>
+                                <input type="text" class="form-control" id="editLicense" name="editLicense" placeholder="Введите лицензию" required>
+                            </div>
+                            <input type="hidden" id="editFarmCode" name="editFarmCode" th:value="${farm.farmCode}">
+                            <input type="hidden"  id="editMoney" name="editMoney" th:value="${farm.money}">
+                            <button type="submit" class="btn btn-primary mt-3">Отправить</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-9">
-            <div class="info">
-                <h2>Свиньи в стойле</h2>
-                <div class="info" th:each="pig, iterStat : ${pigs}">
-                    <span>Порода</span>
-                    <p><a th:text="${pig.breed}"></a></p>
-                    <span>Дата рождения</span>
-                    <p><a th:text="${pig.dateOfBirthday}"></a></p>
-                    <span>Пол</span>
-                    <p><a th:text="${pig.gender}"></a></p>
-                    <span>Пол</span>
-                    <p><a th:text="${pig.gender}"></a></p>
-                    <span>Вес</span>
-                    <p><a th:text="${weights[iterStat.index]}"></a></p>
+        <!-- Модальное окно для добавления зерна -->
+        <div class="modal fade" id="addSternModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addSternModalLabel">Добавить зерно</h5>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Форма внутри модального окна -->
+                        <form id="add-stern">
+                            <div class="form-group mt-3">
+                                <label for="type">Тип зерна</label>
+                                <input type="text" class="form-control" id="type" name="type" placeholder="Введите тип зерна" required>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="sternWeight">Вес зерна (кг)</label>
+                                <input type="number" class="form-control" id="sternWeight" name="sternWeight" step="0.01" placeholder="Введите вес зерна" required>
+                            </div>
+                            <input type="hidden" id="farmerId" name="farmerId" th:value="${farm.farmCode}">
+                            <button type="submit" class="btn btn-primary mt-3">Добавить зерно</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-9">
-            <div class="info">
-                <h2>Откормочные дни</h2>
-                <div class="info" th:each="fatteningDay : ${fatteningDays}">
-                    <span>Дата начала</span>
-                    <p><a th:text="${fatteningDay.dateStart}"></a></p>
-                    <span>Дата конца</span>
-                    <p><a th:text="${fatteningDay.dateEnd}"></a></p>
+
+        <!-- Модальное окно для добавления свиньи -->
+        <div class="modal fade" id="addPigModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addPigModalLabel">Добавить свинью</h5>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Форма внутри модального окна -->
+                        <form id="add-pig">
+                            <div class="form-group mt-3">
+                                <label for="breed">Порода</label>
+                                <input type="text" class="form-control" id="breed" name="breed" placeholder="Введите породу" required>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="dateOfBirthday">Дата рождения</label>
+                                <input type="date" class="form-control" id="dateOfBirthday" name="dateOfBirthday" required>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="gender">Пол</label>
+                                <select class="form-control" id="gender" name="gender" required>
+                                    <option value="Male">Мужской</option>
+                                    <option value="Female">Женский</option>
+                                </select>
+                            </div>
+                            <input type="hidden" id="ownerId" name="ownerId" th:value="${farm.farmCode}">
+                            <button type="submit" class="btn btn-primary mt-3">Добавить свинью</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-        
+
+            <!-- Модальное окно для обновления веса свиньи-->
+            <div id="pigSelectionModal" class="modal fade" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Выберите свинью для изменения веса</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!-- выбор свиньи -->
+                            <form id="add-weight">
+                                <div class="form-group">
+                                    <label for="selectedPig">Выберите свинью:</label>
+                                    <select class="form-control" id="selectedPig" name="selectedPigId" required>
+                                        <option value="" disabled selected>Выберите свинью</option>
+                                        <th:block th:each="pig : ${pigs}">
+                                            <option th:value="${pig.id}" th:text="${pig.breed} + ' - ' + ${pig.dateOfBirthday} + ' - ' + ${pig.gender}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="weightInput">Введите вес:</label>
+                                    <input type="number" step="0.01" class="form-control" id="weightInput" name="weightInput" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-3">Выбрать и ввести вес</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Откормочные дни -->
+            <div id="fatteningDayModal" class="modal fade" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Добавление откормочного дня</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Форма для ввода данных откормочного дня -->
+                            <form id="addFatteningDay">
+                                <div class="form-group">
+                                    <label for="dateStart">Дата начала:</label>
+                                    <input type="date" class="form-control" id="dateStart" name="dateStart" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dateEnd">Дата окончания:</label>
+                                    <input type="date" class="form-control" id="dateEnd" name="dateEnd" required>
+                                </div>
+                                <input type="hidden" id="farm-code" name="farm-code" th:value="${farm.farmCode}">
+                                <button type="submit" class="btn btn-primary mt-3">Добавить откормочный день</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Продажа свиньи -->
+            <div id="pigSaleModal" class="modal fade" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Продажа свиньи</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!-- продажа свиньи -->
+                            <form id="pigSaleForm">
+                                <div class="form-group">
+                                    <label for="myPig">Выберите свинью:</label>
+                                    <select class="form-control" id="myPig" name="myPig" required>
+                                        <option value="" disabled selected>Выберите свинью</option>
+                                        <th:block th:each="pig : ${pigs}">
+                                            <option th:value="${pig.id}" th:text="${pig.breed} + ' - ' + ${pig.dateOfBirthday} + ' - ' + ${pig.gender}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="salePriceInput">Введите цену продажи:</label>
+                                    <input type="number" step="0.01" class="form-control" id="salePriceInput" name="salePriceInput" required>
+                                </div>
+                                <input type="hidden" id="sellerId" name="sellerId" th:value="${farm.farmCode}">
+                                <button type="submit" class="btn btn-primary mt-3">Продать свинью</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Продажа зерна -->
+            <div id="sternSaleModal" class="modal fade" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Продажа зерна</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Форма продажи зерна -->
+                            <form id="sternSaleForm">
+                                <div class="form-group">
+                                    <label for="selectedStern">Выберите зерно:</label>
+                                    <select class="form-control" id="selectedStern" name="selectedStern" required>
+                                        <option value="" disabled selected>Выберите зерно</option>
+                                        <th:block th:each="stern : ${sterns}">
+                                            <option th:value="${stern.id}" th:text="${stern.type}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="sternWeightInput">Введите вес: (в кг)</label>
+                                    <input type="number" step="0.01" class="form-control" id="sternWeightInput" name="sternWeightInput" required>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="costPerKiloInput">Цена за килограмм:</label>
+                                    <input type="number" step="0.01" class="form-control" id="costPerKiloInput" name="costPerKiloInput" required>
+                                </div>
+                                <input type="hidden" id="sellerSId" name="sellerSId" th:value="${farm.farmCode}">
+                                <button type="submit" class="btn btn-primary mt-3">Продать зерно</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Убрать с маркета зерно  -->
+            <div id="sternOutOfMarketModal" class="modal fade" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Снять с продажи зерно</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Форма продажи зерна -->
+                            <form id="sternOutForm">
+                                <div class="form-group">
+                                    <label for="selectedSternOnMarket">Выберите зерно:</label>
+                                    <select class="form-control" id="selectedSternOnMarket" name="selectedSternOnMarket" required>
+                                        <option value="" disabled selected>Выберите зерно</option>
+                                        <th:block th:each="st, ind : ${sternsOnMarket}">
+                                            <option th:value="${st.id}" th:text="${nameSterns[ind.index]} + '; Вес: ' + ${st.weight} + '; цена за кг: ' + ${st.costPerKilo}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-3">Убрать с торговой площадки</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Убрать с маркета свиней  -->
+            <div id="pigOutOfMarketModal" class="modal fade" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Снять с продажи свинью</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Форма продажи свиньи -->
+                            <form id="pigOutForm">
+                                <div class="form-group">
+                                    <label for="selectedPigOnMarket">Выберите свинью:</label>
+                                    <select class="form-control" id="selectedPigOnMarket" name="selectedPigOnMarket" required>
+                                        <option value="" disabled selected>Выберите свинью</option>
+                                        <th:block th:each="p, ind : ${dtosForSellingPigs}">
+                                            <option th:value="${pigForSales[ind.index].id}" th:text="${p.breed} + ' - ' + ${p.dateOfBirthday} + ' - ' + ${p.gender} "></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-3">Убрать с торговой площадки</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="/static/user/js/header.js"></script>
+<script src="/static/user/js/toastr-options.js"></script>
+<script src="/static/user/js/stat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>

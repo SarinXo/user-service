@@ -1,3 +1,4 @@
+/*
 package com.example.userservice.services.impl;
 
 import com.example.userservice.entities.Farm;
@@ -10,10 +11,8 @@ import com.example.userservice.handlers.exceptions.TradingError;
 import com.example.userservice.repositories.FarmRepository;
 import com.example.userservice.repositories.FarmerRepository;
 import com.example.userservice.repositories.PigRepository;
-import com.example.userservice.repositories.ProductRepository;
 import com.example.userservice.repositories.SternRepository;
 import com.example.userservice.repositories.UserRepository;
-import com.example.userservice.services.ProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -95,3 +94,4 @@ public class ProductServiceImpl implements ProductService {
 
 
 }
+*/

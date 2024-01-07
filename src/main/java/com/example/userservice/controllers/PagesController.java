@@ -29,17 +29,13 @@ public class PagesController {
         return "stat-page";
     }
 
-    @GetMapping("/market")
+/*    @GetMapping("/market")
     public String marketplace(Model model,
                               @RequestParam(required = false, defaultValue = "1") int page,
                               @RequestParam(required = false, defaultValue = "5") int size,
                               @RequestParam(required = false, defaultValue = "off") String sortByName,
                               @RequestParam(required = false, defaultValue = "off") String sortByPrice){
-        boolean costil1 = sortByName.equals("on");
-        boolean costil2 = sortByPrice.equals("on");
-        model.addAttribute("sortByName", costil1);
-        model.addAttribute("sortByPrice", costil2);
-        model = pageServiceImpl.setProperties4Market(model, page, size, costil1, costil2);
+        model = pageServiceImpl.setProperties4Market(model, page, size, sortByName, sortByPrice);
         return "market-page";
     }
 
@@ -47,6 +43,6 @@ public class PagesController {
     public String predictStats(Model model){
         model = pageServiceImpl.setProperties4Predict(model);
         return "predict-page";
-    }
+    }*/
 
 }
