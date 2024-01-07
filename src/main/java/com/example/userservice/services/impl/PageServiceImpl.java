@@ -1,5 +1,6 @@
 package com.example.userservice.services.impl;
 
+import com.example.userservice.dto.FarmerDto;
 import com.example.userservice.dto.TablePig;
 import com.example.userservice.entities.Farm;
 import com.example.userservice.entities.Farmer;
@@ -53,9 +54,6 @@ public class PageServiceImpl implements PageService {
     private final FatteningDayService fatteningDayServiceImpl;
     private final SternForSaleService sternForSaleServiceImpl;
     private final PigForSaleService pigForSaleServiceImpl;
-
-    private static final Integer STERN = 1;
-    private static final Integer PIG = 2;
     private static final Double FATTENING_DAY = 0.04;
     private static final Double USUAL_DAY = 0.025;
 
@@ -138,12 +136,18 @@ public class PageServiceImpl implements PageService {
         if(keyWord.equals(Strings.EMPTY)){
             pageToSale = pigForSaleServiceImpl.findAll(pageable);
         } else {
-            pageToSale = pigForSaleServiceImpl.findAllByKeywordAndSortWord(keyWord, pageable);
+            pageToSale = pigForSaleServiceImpl.findAllByKeyword(keyWord, pageable);
         }
         List<TablePig> sellingPigs = new ArrayList<>(pageToSale.stream()
                 .map(pigForSale -> new TablePig(pigServiceImpl.findPigById(pigForSale.getPigId()), pigForSale) )
                 .toList());
-
+        List<FarmerDto> names = new ArrayList<>(sellingPigs.stream()
+                .map(sellingPig -> {
+                    Farmer farmer = farmerServiceImpl.findFarmerById(sellingPig.getFarmerId());
+                    User user = userServiceImpl.getUserById(sellingPig.getFarmerId());
+                    return new FarmerDto(getFio(farmer), user.getLogin());
+                })
+                .toList());
         if (isNameSort) {
             sellingPigs.sort(Comparator.comparing(TablePig::getBreed));
         } else if(isPriceSort) {
@@ -151,11 +155,15 @@ public class PageServiceImpl implements PageService {
         }
 
         model.addAttribute("sellingPigs", sellingPigs);
+        model.addAttribute("currentPage", pageable.getPageNumber() + 1);
+        model.addAttribute("pageToSale", pageToSale);
+        model.addAttribute("names", names);
+        model.addAttribute("sortByName", sortByName);
+        model.addAttribute("sortByPrice", sortByPrice);
+        model.addAttribute("keyword", keyWord);
 
         return model;
     }
-
-    private int getPigCost
 
     private Double getLastPigWeight(Pig pig){
         return weightServiceImpl.findCurrentWeightByPigId(pig.getId()).getWeight();

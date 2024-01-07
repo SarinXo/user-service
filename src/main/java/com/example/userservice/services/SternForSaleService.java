@@ -10,4 +10,6 @@ public interface SternForSaleService {
     List<SternForSale> getByFarmerId(Integer farmerId);
 
     void takeBack(Integer integer);
+
+    void buy(Integer id, Double weight);
 }

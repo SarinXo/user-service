@@ -81,7 +81,7 @@ function buyItem(id, csrfHeader, csrfToken) {
 
     $.ajax({
         type: 'POST',
-        url: '/users/buy',
+        url: '/users/buy-pig',
         contentType: "application/json",
         data: JSON.stringify({id: id}),
         beforeSend: function(xhr) {

@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface SternForSaleRepository extends JpaRepository<SternForSale, Integer> {
     Optional<SternForSale> findByFarmerIdAndSternId(Integer farmerId, Integer sternId);
     List<SternForSale> findByFarmerId(Integer farmerId);
+
+    SternForSale getSternForSaleById(Integer id);
 }

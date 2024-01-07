@@ -17,6 +17,7 @@ public interface PigForSaleService {
 
     void takeBack(Integer integer);
 
-    Page<PigForSale> findAllByKeywordAndSortWord(String keyWord,
-                                                 Pageable pageable);
+    Page<PigForSale> findAllByKeyword(String keyWord, Pageable pageable);
+
+    void buy(Integer id);
 }

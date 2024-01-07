@@ -53,6 +53,6 @@ public class PagesController {
                               @RequestParam(required = false, defaultValue = "off") String sortByPrice,
                               @RequestParam(required = false, defaultValue = "") String keyWord) {
         model = pageServiceImpl.setProperties4MarketPigs(model, page, size, sortByName, sortByPrice, keyWord);
-        return "market-page";
+        return "pig-market";
     }
 }

@@ -32,6 +32,12 @@ public class Stern {
     private String type;
     private Double weight;
 
+    public Stern(Integer farmerId, String type, Double weight) {
+        this.farmerId = farmerId;
+        this.type = type;
+        this.weight = weight;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

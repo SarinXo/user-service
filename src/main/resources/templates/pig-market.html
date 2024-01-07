@@ -27,14 +27,15 @@
     <br/>
     <div class="row">
         <div class="col-md-3">
-            <h5>Отсортировать по</h5>
+            <h5>Параметры сортировки</h5>
+
             <form id="checkForm" method="GET">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="sortByName"
-                           name="sortByName" th:checked="${sortByName}">
-                    <label class="form-check-label" for="sortByName">
-                        Название
-                    </label>
+                <input class="form-check-input" type="checkbox" id="sortByName"
+                       name="sortByName" th:checked="${sortByName}">
+                <label class="form-check-label" for="sortByName">
+                    Название
+                </label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="sortByPrice"
@@ -43,8 +44,10 @@
                         Цена
                     </label>
                 </div>
+                <label for="keyWord">Ключевое слово:</label>
+                <input type="text" id="keyWord" name="keyWord" th:value="${keyword}" class="form-control">
                 <button class="btn btn-primary mt-3" type="submit">
-                    Отсортировать
+                    Найти
                 </button>
             </form>
         </div>
@@ -54,26 +57,26 @@
                 <thead>
                 <tr>
                     <td>Владелец</td>
-                    <td>Название</td>
-                    <td>Тип</td>
-                    <td>Вес</td>
+                    <td>Порода</td>
+                    <td>Дата рождения</td>
+                    <td>Пол</td>
                     <td>Цена</td>
                     <td></td>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="product, index : ${productDtos}" th:id="'row' + ${productPage.getContent[__${index.index}__].id}">
+                <tr th:each="sPig, index : ${sellingPigs}" th:id="'row' + ${pageToSale.getContent[__${index.index}__].id}">
                     <td>
-                        <a th:href="@{'/users/page?login=' + ${product.ownerLogin}}" th:text="${product.ownerFio}"></a>
+                        <a th:href="@{'/users/page?login=' + ${names[__${index.index}__].username}}" th:text="${names[__${index.index}__].fio}"></a>
                     </td>
-                    <td th:text="${product.identificator}"></td>
-                    <td th:text="${product.type}"></td>
-                    <td th:text="${product.weight}"></td>
-                    <td th:text="${product.cost}"></td>
+                    <td th:text="${sPig.breed}"></td>
+                    <td th:text="${sPig.dateOfBirthday}"></td>
+                    <td th:text="${sPig.gender}"></td>
+                    <td th:text="${sPig.cost}"></td>
                     <td>
                         <button class="btn btn-primary buy"
-                                th:data-id="${productPage.getContent[__${index.index}__].id}"
-                                th:data-name="${product.identificator}">Купить</button>
+                                th:data-id="${sPig.id}"
+                                th:data-name="' свинью ' + ${sPig.breed}">Купить</button>
                     </td>
                 </tr>
                 </tbody>
@@ -84,23 +87,26 @@
                 <ul class="pagination">
                     <li class="page-item" th:class="${currentPage > 1} ? 'enabled' : 'disabled'">
                         <a class="page-link"
-                           th:href="@{'/users/market?page=' + ${currentPage - 1} +
+                           th:href="@{'/users/market/pigs?page=' + ${currentPage - 1} +
                             ${(sortByName ? '&sortByName=on' : '')} +
-                            ${(sortByPrice ? '&sortByPrice=on' : '')}}"  aria-label="Previous">
+                            ${(sortByPrice ? '&sortByPrice=on' : '')} +
+                            ${(keyword != '' ? '&keyWord=' + keyword : '')}}"  aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
 
-                    <li th:each="pageNumber : ${#numbers.sequence(1, productPage.getTotalPages)}" th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
-                        <a class="page-link" th:href="@{'/users/market?page=' + ${pageNumber} +
+                    <li th:each="pageNumber : ${#numbers.sequence(1, pageToSale.getTotalPages)}" th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
+                        <a class="page-link" th:href="@{'/users/market/pigs?page=' + ${pageNumber} +
                             ${(sortByName ? '&sortByName=on' : '')} +
-                            ${(sortByPrice ? '&sortByPrice=on' : '')}}" th:text="${pageNumber}"></a>
+                            ${(sortByPrice ? '&sortByPrice=on' : '')} +
+                            ${(keyword != '' ? '&keyWord=' + keyword : '')}}" th:text="${pageNumber}"></a>
                     </li>
 
-                    <li class="page-item" th:class="${currentPage < productPage.getTotalPages} ? 'enabled' : 'disabled'">
-                        <a class="page-link" th:href="@{'/users/market?page=' + ${(currentPage + 1)} +
+                    <li class="page-item" th:class="${currentPage < pageToSale.getTotalPages} ? 'enabled' : 'disabled'">
+                        <a class="page-link" th:href="@{'/users/market/pigs?page=' + ${(currentPage + 1)} +
                             ${(sortByName ? '&sortByName=on' : '')} +
-                            ${(sortByPrice ? '&sortByPrice=on' : '')}}" aria-label="Next">
+                            ${(sortByPrice ? '&sortByPrice=on' : '')} +
+                            ${(keyword != '' ? '&keyWord=' + keyword : '')}}" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>

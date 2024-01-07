@@ -12,14 +12,13 @@ document.getElementById('header').innerHTML
     '            <div class="collapse navbar-collapse" id="navbarSupportedContent">\n' +
     '                <ul class="navbar-nav me-auto mb-2 mb-lg-0">\n' +
     '                    <a class="nav-link" href="/users/stat">Моя статистика</a>\n' +
-    '                    <a class="nav-link" href="/users/market">Торговая площадка</a>\n' +
     '                    <li class="nav-item dropdown">\n' +
     '                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">\n' +
     '                            Торговая площадка\n' +
     '                        </a>\n' +
     '                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">\n' +
-    '                            <li><a class="dropdown-item" href="#/users/market/pigs"               >Свиньи</a></li>\n' +
-    '                            <li><a class="dropdown-item" href="#/users/market/sterns"             >Зерно</a></li>\n' +
+    '                            <li><a class="dropdown-item" href="/users/market/pigs"               >Свиньи</a></li>\n' +
+    '                            <li><a class="dropdown-item" href="/users/market/sterns"             >Зерно</a></li>\n' +
     '                        </ul>\n' +
     '                    </li>\n' +
     '                    <a class="nav-link" href="/users/predict">Рассчет показателей</a>\n' +
